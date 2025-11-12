@@ -14,7 +14,7 @@
 <meta property="og:description" content="前言 第不知道多少次断更后复更  发现自己不更的瓶颈好像并不单纯是有的时候心态崩了或者忙飞了…  Anyway, 这次我直接大幅度减少记日记的复杂度： 直接在txt里面记！  所以，如果只是几天暂时断更，未必是真的断更了，没准只是都堆在我的txt里面…  but， 谁知道呢… 希望这次能真的不断更（至少在txt层面上）  作为一个完全公开版日记，里面可以有什么呢：  在呢喃的生活日常  碎碎念">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-11-07T03:18:17.000Z">
-<meta property="article:modified_time" content="2025-11-07T15:31:43.982Z">
+<meta property="article:modified_time" content="2025-11-12T15:04:26.630Z">
 <meta property="article:author" content="konnyaku_cstdio">
 <meta name="twitter:card" content="summary">
   
@@ -275,7 +275,65 @@ mjx-container[display="true"] + br {
 <p>晚上接着花了30min光速飞到了扬州泰州国际机场。离南京禄口近在咫尺了！</p>
 <h3 id="11-7"><a href="#11-7" class="headerlink" title="11.7"></a>11.7</h3><p>晚上根据约定带着舍友去吃地道的。金鹰的老百京火锅除了贵点还是相当不错的。麻将是稠的。锅子基本算是清水的铜锅的。肉是新鲜的。糖蒜和奶皮子酸奶是地道的（至少对于我这样的新北京来说是过关的）。爆肚是爽的。门钉肉饼虽然我觉得应该是不地道的，但是毕竟在南京貌似目前没找到第二个卖这个东西的地方了，所以还是好评。爽赤。</p>
 <p>其实今天其余的时间都在跟破烂jí网实验斗智斗勇。感觉测试它要远比写完它难。让deepseek写了个测试脚本，结果可想而知涉及到内核的ebpf先是显示各种加载问题，然后和deepseek合作解决后发现问题远不止如此！！！deepseek竟然把bpf挂载到了/tmp下，一下自把文件系统的权限整爆了，vscoder-server等东西全都用不了了。真6 。 <del>所以说，在关键事情上不要百分之百相信人工智能</del></p>
+<h3 id="11-8"><a href="#11-8" class="headerlink" title="11.8"></a>11.8</h3><ul>
+<li><p>嗯，昨天吃完饭离上床的时间间隔疑似有点不足了，一晚上感觉消化不良被弄醒了好几次。遂赶紧吃了点黄连素。</p>
+</li>
+<li><p>继续和ds一起干jí网。1h后，deepseek比我先开始语无伦次</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">deepseek</span><br><span class="line"></span><br><span class="line">问题在于设置算法时的语法：</span><br><span class="line">bash</span><br><span class="line">错误的：</span><br><span class="line">sysctl -w net.ipv4.tcp_congestion_control=bpf_cc</span><br><span class="line"></span><br><span class="line">正确的：</span><br><span class="line">sysctl -w net.ipv4.tcp_congestion_control=bpf_cc</span><br><span class="line">等等，语法是一样的。问题可能是权限或者路径。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>《自己吓自己》
+</code></pre>
+<h3 id="11-9"><a href="#11-9" class="headerlink" title="11.9"></a>11.9</h3><ul>
+<li><p>今天终于能搞出一个能跑的脚本了。核心原因是得把iperf3放在一个一定不在”本机的“地方。然后就成功发现了自己写的jí网TCP算法有大问题。ok啊。</p>
+<p>  然后发现原来自己文件结构乱套了，之前用的一个空的TCP函数来跑。关键是这样竟然跑的通，虽然达到50MBps就燃尽了。楽。</p>
+<p>  然后就继续和ds斗智斗勇</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">我：你最后看一眼，我这个代码是不是没问题</span><br><span class="line"></span><br><span class="line">ds：基本没问题，但是注意：linux内核结构体中没有snd_cwnd_cnt这个字段，你应该使用自己的计数器。</span><br><span class="line"></span><br><span class="line">我：你确定吗？我的代码正常跑起来了</span><br><span class="line"></span><br><span class="line">ds：的确你应该用自己的计数器。修改后的代码：........</span><br><span class="line"></span><br><span class="line">我：但是我们的实验指导上面都列举的snd_cwnd_cnt是Linux 内核中的 struct tcp_sock 中重要的成员</span><br><span class="line"></span><br><span class="line">ds：你说得对，我之前的回答需要修正。让我重新解释这个问题！ .....  实验指导说应该使用你自己的计数器，可能是让你：理解这个字段的用途....</span><br><span class="line"></span><br><span class="line">我：？ 不是你让我使用自己的计数器的吗</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>《坏了，AI已经学会推卸责任了》
+</code></pre>
 <ul>
+<li><p>晚上跟爸妈聊天，看到故乡法源寺的蓝天彩叶秋景，不禁感叹虽然南京也有梧桐大道的秋色，但是作为南方还是和北方风格迥异。尤其是回想这边连续三周都阴雨连绵只出过一次太阳，忽然还是有点怀念北京的秋了。</p>
+</li>
+<li><p>吃完晚饭继续开着764er完成最后一个relay飞到南京，然后发现出奇的顺利。降落的时候甚至成功拉飘了。大禄口的跑道又长，真的令人安心。接下来飞哪儿好呢？</p>
+</li>
+</ul>
+<h3 id="11-10"><a href="#11-10" class="headerlink" title="11.10"></a>11.10</h3><ul>
+<li><p>jí网实验战胜了，但是没完全战胜，因为我要写附加题。</p>
+<p>  果然，下午有成功把自己整疯了，开始随机唱歌</p>
+</li>
+<li><p>今天终于明白唐氏的来由。原来真的是个生物疾病。我之前真以为是网络热梗</p>
+<p>  不学生物导致的</p>
+</li>
+</ul>
+<h3 id="11-11"><a href="#11-11" class="headerlink" title="11.11"></a>11.11</h3><ul>
+<li><p>光棍节快乐，孩子们</p>
+</li>
+<li><p>中午去吃汤包。然后再陪他们喝了个瑞幸。嗯，貌似是因为和鬼灭之刃有联动。并且点了后舍友心血来潮速速拿下周五的鬼灭电影票。</p>
+</li>
+<li><p>也是全宿舍出动了。去跑步了</p>
+<p>  结果跟我预想的一样，1000m前400m跟着舍友后面自己跑，喜提4min05.  虽然没有往亖里踩油门，但是最大心率还是快180了。淦。<del>人还是老了。</del></p>
+<p>  想着大二体测的时候自己风驰电掣超越看起来精瘦精瘦的大三老哥拿下小组第一。现在老哥竟是我自己了。<del>如果过去一年没有每天晚上跑基本量估计就成老狗了</del></p>
+</li>
+<li><p>看到新出了个叫《OI教练模拟器》的奇妙东西。</p>
+</li>
+<li><p>晚上开始新的航程！目标是南通。今天先花了15min飞到了奔牛机场。虽然是没有航标的机场但是还是一把降落成功（虽然有点重）。下班！</p>
+</li>
+</ul>
+<h3 id="11-12"><a href="#11-12" class="headerlink" title="11.12"></a>11.12</h3><ul>
+<li>中午和学长讨论后发现某个神奇的问题的确不是我搞错了，是真实存在的</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">学长：是不是原作者论文数据造假了。怎么会这样</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>晚上舍友请吃饭。听说海底捞有粥的周边，所以就去了。当然，我不玩粥，我只负责吃。</p>
+<p>  又是大胃袋的晚上。老铁们，品尝全国美食，<del>暂时暴饮暴食啊</del></p>
+<p>  番茄锅里面的东西真的味真足。尤其是炸蛋。</p>
+<p>  不过事实证明南京的大部分火锅店的麻酱是真的稀。新街口和仙林的这两家海底捞的麻酱我都能直接喝。这个角度来看，和园的老北京火锅和东门口至少在麻酱这一点做的非常百京儿。</p>
+</li>
 <li><p>tag: </p>
 <h5 id="最新位置"><a href="#最新位置" class="headerlink" title="最新位置"></a>最新位置</h5><p>  <a href="#%E7%9B%AE%E5%BD%95">回到目录</a></p>
 </li>
